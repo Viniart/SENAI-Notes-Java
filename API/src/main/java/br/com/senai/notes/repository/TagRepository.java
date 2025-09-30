@@ -19,7 +19,7 @@ public interface TagRepository extends JpaRepository<Tag, Integer> {
     // List<Tag> findByIdUsuarioId(@Param("idDoUsuario") Integer usuarioId);
 
     // Procura tags do Usuário pelo email
-    List<Tag> findByUsuarioEmail(String email);
+    List<Tag> findByUsuarioEmailIgnoreCase(String email);
     // ALTERNATIVA (JPQL):
     // @Query("SELECT t FROM Tag t JOIN t.usuario u WHERE u.email = :emailDoUsuario")
     // List<Tag> findByIdUsuarioEmail(@Param("emailDoUsuario") String email);
