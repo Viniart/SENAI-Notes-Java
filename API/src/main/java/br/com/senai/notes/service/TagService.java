@@ -1,6 +1,8 @@
 package br.com.senai.notes.service;
 
 import br.com.senai.notes.dto.tag.CadastroTagDTO;
+import br.com.senai.notes.dto.tag.ListarTagDTO;
+import br.com.senai.notes.dto.usuario.ListarUsuarioDTO;
 import br.com.senai.notes.model.Tag;
 import br.com.senai.notes.model.Usuario;
 import br.com.senai.notes.repository.TagRepository;
@@ -8,7 +10,9 @@ import br.com.senai.notes.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TagService {
@@ -21,16 +25,25 @@ public class TagService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public List<Tag> listarTodos() {
-        return tagRepository.findAll();
+    public List<ListarTagDTO> listarTodos() {
+
+        List<Tag> tags = tagRepository.findAll();
+
+        return tags.stream()
+                .map(this::converterParaListagemDTO)
+                .collect(Collectors.toList());
     }
 
     public Tag buscarPorId(Integer id) {
         return tagRepository.findById(id).orElse(null);
     }
 
-    public List<Tag> listarPorEmailUsuario(String email) {
-        return tagRepository.findByUsuarioEmailIgnoreCase(email);
+    public List<ListarTagDTO> listarPorEmailUsuario(String email) {
+        List<Tag> tags = tagRepository.findByUsuarioEmailIgnoreCase(email);
+
+        return tags.stream()
+                .map(this::converterParaListagemDTO)
+                .collect(Collectors.toList());
     }
 
     public List<Tag> listarPorUsuarioId(Integer id) {
@@ -45,6 +58,7 @@ public class TagService {
 //
 //        return tagRepository.save(tag);
 //    }
+
     public Tag cadastrar(CadastroTagDTO tagDto) {
         Integer usuarioId = tagDto.getUsuarioId();
         Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -80,6 +94,21 @@ public class TagService {
 
         tagRepository.delete(tagParaDeletar);
         return tagParaDeletar;
+    }
+
+    private ListarTagDTO converterParaListagemDTO(Tag tag) {
+        ListarTagDTO dto = new ListarTagDTO();
+
+        ListarUsuarioDTO usuarioDTO = new ListarUsuarioDTO();
+        usuarioDTO.setId(tag.getUsuario().getId());
+        usuarioDTO.setNome(tag.getUsuario().getNome());
+        usuarioDTO.setEmail(tag.getUsuario().getEmail());
+
+        dto.setId(tag.getId());
+        dto.setNomeTag(tag.getNomeTag());
+        dto.setUsuario(usuarioDTO);
+
+        return dto;
     }
 
 }

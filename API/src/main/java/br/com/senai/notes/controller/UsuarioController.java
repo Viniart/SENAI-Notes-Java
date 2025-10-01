@@ -1,5 +1,6 @@
 package br.com.senai.notes.controller;
 
+import br.com.senai.notes.dto.usuario.ListarUsuarioDTO;
 import br.com.senai.notes.model.Usuario;
 import br.com.senai.notes.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,8 +29,8 @@ public class UsuarioController {
     @GetMapping
     @Operation(summary = "Lista todos os usuários", description = "Retorna uma lista com todos os usuários cadastrados.")
     @ApiResponse(responseCode = "200", description = "Operação bem-sucedida")
-    public ResponseEntity<List<Usuario>> listarUsuarios() {
-        List<Usuario> usuarios = usuarioService.listarTodos();
+    public ResponseEntity<List<ListarUsuarioDTO>> listarUsuarios() {
+        List<ListarUsuarioDTO> usuarios = usuarioService.listarTodos();
         return ResponseEntity.ok(usuarios);
     }
 

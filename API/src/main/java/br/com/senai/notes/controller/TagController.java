@@ -1,6 +1,7 @@
 package br.com.senai.notes.controller;
 
 import br.com.senai.notes.dto.tag.CadastroTagDTO;
+import br.com.senai.notes.dto.tag.ListarTagDTO;
 import br.com.senai.notes.model.Tag;
 import br.com.senai.notes.service.TagService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,16 +26,16 @@ public class TagController {
     @GetMapping
     @Operation(summary = "Lista todas as tags", description = "Retorna uma lista com todas as tags cadastradas.")
     @ApiResponse(responseCode = "200", description = "Operação bem-sucedida")
-    public ResponseEntity<List<Tag>> listarTags() {
-        List<Tag> tags = tagService.listarTodos();
+    public ResponseEntity<List<ListarTagDTO>> listarTags() {
+        List<ListarTagDTO> tags = tagService.listarTodos();
         return ResponseEntity.ok(tags);
     }
 
     @GetMapping("/usuario/{email}")
     @Operation(summary = "Lista as tags de um usuário", description = "Retorna todas as tags de um usuário específico, buscando pelo e-mail.")
     @ApiResponse(responseCode = "200", description = "Operação bem-sucedida (pode retornar uma lista vazia)")
-    public ResponseEntity<List<Tag>> listarTagsPorEmailUsuario(@PathVariable String email) {
-        List<Tag> tags = tagService.listarPorEmailUsuario(email);
+    public ResponseEntity<List<ListarTagDTO>> listarTagsPorEmailUsuario(@PathVariable String email) {
+        List<ListarTagDTO> tags = tagService.listarPorEmailUsuario(email);
         return ResponseEntity.ok(tags);
     }
 
