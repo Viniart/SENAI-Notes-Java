@@ -1,5 +1,6 @@
 package br.com.senai.notes.controller;
 
+import br.com.senai.notes.dto.usuario.CadastroUsuarioDTO;
 import br.com.senai.notes.dto.usuario.ListarUsuarioDTO;
 import br.com.senai.notes.model.Usuario;
 import br.com.senai.notes.service.UsuarioService;
@@ -41,7 +42,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado para o ID informado")
     })
     public ResponseEntity<?> buscarUsuarioPorId(@PathVariable Integer id) {
-        Usuario usuario = usuarioService.buscarPorId(id);
+        ListarUsuarioDTO usuario = usuarioService.buscarPorIdDTO(id);
 
         if (usuario == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -57,8 +58,8 @@ public class UsuarioController {
             @ApiResponse(responseCode = "201", description = "Usuário cadastrado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos para o cadastro")
     })
-    public ResponseEntity<Usuario> inserirUsuario(@RequestBody Usuario usuario) {
-        Usuario novoUsuario = usuarioService.cadastrar(usuario);
+    public ResponseEntity<CadastroUsuarioDTO> inserirUsuario(@RequestBody CadastroUsuarioDTO usuario) {
+        CadastroUsuarioDTO novoUsuario = usuarioService.cadastrar(usuario);
 
         if (novoUsuario == null) {
             return ResponseEntity.badRequest().build();
@@ -73,8 +74,8 @@ public class UsuarioController {
             @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado para o ID informado")
     })
-    public ResponseEntity<?> atualizarUsuario(@PathVariable Integer id, @RequestBody Usuario usuario) {
-        Usuario usuarioAtualizado = usuarioService.atualizar(id, usuario);
+    public ResponseEntity<?> atualizarUsuario(@PathVariable Integer id, @RequestBody CadastroUsuarioDTO usuario) {
+        CadastroUsuarioDTO usuarioAtualizado = usuarioService.atualizar(id, usuario);
 
         if (usuarioAtualizado == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

@@ -50,16 +50,7 @@ public class TagService {
         return tagRepository.findByUsuarioId(id);
     }
 
-//    public Tag cadastrar(CadastroTagDTO dto) {
-//        // Criar uma tag
-//        Tag tag = new Tag();
-//
-//        tag.setNomeTag(dto.getNomeTag());
-//
-//        return tagRepository.save(tag);
-//    }
-
-    public Tag cadastrar(CadastroTagDTO tagDto) {
+    public CadastroTagDTO cadastrar(CadastroTagDTO tagDto) {
         Integer usuarioId = tagDto.getUsuarioId();
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com o ID: " + usuarioId));
@@ -68,7 +59,8 @@ public class TagService {
         novaTag.setNomeTag(tagDto.getNomeTag());
         novaTag.setUsuario(usuario);
 
-        return tagRepository.save(novaTag);
+        tagRepository.save(novaTag);
+        return tagDto;
     }
 
     public Tag atualizar(Integer id, CadastroTagDTO tag) {
@@ -98,15 +90,8 @@ public class TagService {
 
     private ListarTagDTO converterParaListagemDTO(Tag tag) {
         ListarTagDTO dto = new ListarTagDTO();
-
-        ListarUsuarioDTO usuarioDTO = new ListarUsuarioDTO();
-        usuarioDTO.setId(tag.getUsuario().getId());
-        usuarioDTO.setNome(tag.getUsuario().getNome());
-        usuarioDTO.setEmail(tag.getUsuario().getEmail());
-
         dto.setId(tag.getId());
         dto.setNomeTag(tag.getNomeTag());
-        dto.setUsuario(usuarioDTO);
 
         return dto;
     }

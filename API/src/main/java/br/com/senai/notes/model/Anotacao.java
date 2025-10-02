@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -39,5 +41,8 @@ public class Anotacao {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
+
+    @OneToMany(mappedBy = "idAnotacao", fetch =  FetchType.LAZY)
+    private List<TagAnotacao> tagAnotacao = new ArrayList<>();
 
 }

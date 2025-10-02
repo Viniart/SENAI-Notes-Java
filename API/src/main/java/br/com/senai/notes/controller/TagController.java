@@ -57,8 +57,8 @@ public class TagController {
             @ApiResponse(responseCode = "201", description = "Tag cadastrada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos (ex: usuarioId não existe)")
     })
-    public ResponseEntity<Tag> inserirTag(@RequestBody CadastroTagDTO tagDto) {
-        Tag novaTag = tagService.cadastrar(tagDto);
+    public ResponseEntity<CadastroTagDTO> inserirTag(@RequestBody CadastroTagDTO tagDto) {
+        CadastroTagDTO novaTag = tagService.cadastrar(tagDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(novaTag);
     }
 

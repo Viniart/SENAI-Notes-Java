@@ -12,4 +12,17 @@ import java.util.List;
 public interface AnotacaoRepository extends JpaRepository<Anotacao, Integer> {
     @Query("SELECT t FROM Anotacao t JOIN t.usuario u WHERE LOWER(u.email) = LOWER(:emailDoUsuario)")
     List<Anotacao> findByUsuarioEmail(@Param("emailDoUsuario") String email);
+
+    @Query("SELECT DISTINCT a FROM Anotacao a " +
+    "LEFT JOIN FETCH a.usuario " +
+    "LEFT JOIN FETCH a.tagAnotacao ta " +
+    "LEFT JOIN FETCH ta.idTag t")
+    List<Anotacao> findAllCompleto();
+
+    @Query("SELECT DISTINCT a FROM Anotacao a " +
+            "LEFT JOIN FETCH a.usuario u " +
+            "LEFT JOIN FETCH a.tagAnotacao ta " +
+            "LEFT JOIN FETCH ta.idTag t" +
+    " WHERE LOWER(u.email) = LOWER(:emailDoUsuario)")
+    List<Anotacao> findByUsuarioEmailCompleto(@Param("emailDoUsuario") String email);
 }

@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Integer> {
@@ -23,4 +24,6 @@ public interface TagRepository extends JpaRepository<Tag, Integer> {
     // ALTERNATIVA (JPQL):
     // @Query("SELECT t FROM Tag t JOIN t.usuario u WHERE u.email = :emailDoUsuario")
     // List<Tag> findByIdUsuarioEmail(@Param("emailDoUsuario") String email);
+
+    Optional<Tag> findByNomeTagAndUsuarioId(String nome, Integer id);
 }

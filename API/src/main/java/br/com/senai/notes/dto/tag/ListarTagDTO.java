@@ -9,5 +9,4 @@ import lombok.Data;
 public class ListarTagDTO {
     private Integer id;
     private String nomeTag;
-    private ListarUsuarioDTO usuario;
 }

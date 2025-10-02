@@ -1,5 +1,6 @@
 package br.com.senai.notes.service;
 
+import br.com.senai.notes.dto.usuario.CadastroUsuarioDTO;
 import br.com.senai.notes.dto.usuario.ListarUsuarioDTO;
 import br.com.senai.notes.model.Usuario;
 import br.com.senai.notes.repository.UsuarioRepository;
@@ -28,29 +29,44 @@ public class UsuarioService {
     }
 
     public Usuario buscarPorId(Integer id) {
+
         return usuarioRepository.findById(id).orElse(null);
     }
 
-    public Usuario cadastrar(Usuario usuario) {
-        String senha = encoder.encode(usuario.getSenha());
-        usuario.setSenha(senha);
+    public ListarUsuarioDTO buscarPorIdDTO(Integer id) {
+        Usuario usuario = usuarioRepository.findById(id).orElse(null);
 
-        return usuarioRepository.save(usuario);
+        return converterParaListagemDTO(usuario);
     }
 
-    public Usuario atualizar(Integer id, Usuario usuario) {
-        Usuario antigo = buscarPorId(usuario.getId());
+    public CadastroUsuarioDTO cadastrar(CadastroUsuarioDTO dto) {
+        Usuario usuario = new Usuario();
+
+        String senha = encoder.encode(dto.getSenha());
+        usuario.setSenha(senha);
+        usuario.setNome(dto.getNome());
+        usuario.setEmail(dto.getEmail());
+
+        usuarioRepository.save(usuario);
+
+        return dto;
+    }
+
+    public CadastroUsuarioDTO atualizar(Integer id, CadastroUsuarioDTO dto) {
+        Usuario antigo = buscarPorId(id);
 
         if (antigo == null) {
             return null;
         }
 
-        antigo.setNome(usuario.getNome());
-        antigo.setEmail(usuario.getEmail());
-        String senha  = encoder.encode(usuario.getSenha());
+        antigo.setNome(dto.getNome());
+        antigo.setEmail(dto.getEmail());
+        String senha  = encoder.encode(dto.getSenha());
         antigo.setSenha(senha);
 
-        return usuarioRepository.save(antigo);
+        usuarioRepository.save(antigo);
+
+        return dto;
     }
 
     public Usuario deletar(Integer id) {
