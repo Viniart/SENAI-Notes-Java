@@ -2,6 +2,10 @@ package br.com.senai.notes.controller;
 
 import br.com.senai.notes.dto.login.LoginDTO;
 import br.com.senai.notes.dto.login.LoginResponseDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +24,7 @@ import java.time.Instant;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Login", description = "Endpoint para Login no Sistema!")
 public class LoginController {
 
     private final AuthenticationManager authenticationManager;
@@ -31,6 +36,8 @@ public class LoginController {
     }
 
     @PostMapping()
+    @Operation(summary = "Efetua Login", description = "Retorna o token e usuário que fez o login.")
+    @ApiResponse(responseCode = "200", description = "Operação bem-sucedida")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginRequest) {
         var authToken = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getSenha());
 

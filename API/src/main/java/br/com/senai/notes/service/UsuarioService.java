@@ -36,6 +36,18 @@ public class UsuarioService {
     public ListarUsuarioDTO buscarPorIdDTO(Integer id) {
         Usuario usuario = usuarioRepository.findById(id).orElse(null);
 
+        if(usuario == null) {
+            return null;
+        }
+        return converterParaListagemDTO(usuario);
+    }
+
+    public ListarUsuarioDTO buscarPorEmailDTO(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
+
+        if(usuario == null) {
+            return null;
+        }
         return converterParaListagemDTO(usuario);
     }
 
