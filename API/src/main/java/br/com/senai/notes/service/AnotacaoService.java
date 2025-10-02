@@ -70,8 +70,6 @@ public class AnotacaoService {
         Anotacao anotacaoSalva = anotacaoRepository.save(novaAnotacao);
 
         // 3. Processo as tags
-        List<Tag> tagsParaAssociar = new ArrayList<>();
-
         for (String nomeTag : anotacao.getTags()) {
             Tag tag = tagRepository.findByNomeTagAndUsuarioId(nomeTag, usuario.getId())
                     .orElseGet(() -> {
