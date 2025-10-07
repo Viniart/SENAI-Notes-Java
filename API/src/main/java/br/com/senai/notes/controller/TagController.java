@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,7 +60,7 @@ public class TagController {
             @ApiResponse(responseCode = "201", description = "Tag cadastrada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos (ex: usuarioId não existe)")
     })
-    public ResponseEntity<CadastroTagDTO> inserirTag(@RequestBody CadastroTagDTO tagDto) {
+    public ResponseEntity<CadastroTagDTO> inserirTag(@Valid @RequestBody CadastroTagDTO tagDto) {
         CadastroTagDTO novaTag = tagService.cadastrar(tagDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(novaTag);
     }
@@ -70,7 +71,7 @@ public class TagController {
             @ApiResponse(responseCode = "200", description = "Tag atualizada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Tag ou Usuário não encontrado para o ID informado")
     })
-    public ResponseEntity<Tag> atualizarTag(@PathVariable Integer id, @RequestBody CadastroTagDTO tagDto) {
+    public ResponseEntity<Tag> atualizarTag(@PathVariable Integer id, @Valid @RequestBody CadastroTagDTO tagDto) {
         Tag tagAtualizada = tagService.atualizar(id, tagDto);
         return ResponseEntity.ok(tagAtualizada);
     }

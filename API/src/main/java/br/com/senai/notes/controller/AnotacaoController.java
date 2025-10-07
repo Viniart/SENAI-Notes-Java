@@ -8,8 +8,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,9 +37,10 @@ public class AnotacaoController {
     }
 
     @GetMapping("/{email}")
+    @PreAuthorize("#email == authentication.getName()")
     @Operation(summary = "Lista as anotações de um usuário", description = "Retorna todas as anotações de um usuário específico, buscando pelo e-mail.")
     @ApiResponse(responseCode = "200", description = "Operação bem-sucedida (pode retornar uma lista vazia se o usuário não tiver anotações)")
-    public ResponseEntity<List<ListarAnotacaoDTO>> listarTodasAnotacoes(@PathVariable String email) {
+    public ResponseEntity<List<ListarAnotacaoDTO>> listarTodasAnotacoes(@PathVariable String email, Authentication authentication) {
         return ResponseEntity.ok(anotacaoService.listarAnotacoesPorEmail(email));
     }
 
@@ -46,7 +50,7 @@ public class AnotacaoController {
             @ApiResponse(responseCode = "201", description = "Anotação cadastrada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos na requisição (ex: usuarioId não existe)")
     })
-    public ResponseEntity<CadastroAnotacaoDTO> cadastrarAnotacao(@RequestBody CadastroAnotacaoDTO dto) {
+    public ResponseEntity<CadastroAnotacaoDTO> cadastrarAnotacao(@Valid @RequestBody CadastroAnotacaoDTO dto) {
         CadastroAnotacaoDTO anotacaoDTO = anotacaoService.cadastrarAnotacao(dto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(anotacaoDTO);

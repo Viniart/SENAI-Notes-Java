@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,7 +59,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "201", description = "Usuário cadastrado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos para o cadastro")
     })
-    public ResponseEntity<CadastroUsuarioDTO> inserirUsuario(@RequestBody CadastroUsuarioDTO usuario) {
+    public ResponseEntity<CadastroUsuarioDTO> inserirUsuario(@Valid @RequestBody CadastroUsuarioDTO usuario) {
         CadastroUsuarioDTO novoUsuario = usuarioService.cadastrar(usuario);
 
         if (novoUsuario == null) {
@@ -74,7 +75,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado para o ID informado")
     })
-    public ResponseEntity<?> atualizarUsuario(@PathVariable Integer id, @RequestBody CadastroUsuarioDTO usuario) {
+    public ResponseEntity<?> atualizarUsuario(@PathVariable Integer id, @Valid @RequestBody CadastroUsuarioDTO usuario) {
         CadastroUsuarioDTO usuarioAtualizado = usuarioService.atualizar(id, usuario);
 
         if (usuarioAtualizado == null) {

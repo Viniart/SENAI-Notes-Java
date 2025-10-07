@@ -14,10 +14,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         description = "API responsável pelo gerenciamento de usuários, tags, anotações e processo de Login do Projeto SENAI Notes"
 ))
 @SecurityScheme(
-        name = "bearerAuth",
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer",
-        bearerFormat = "JWT"
+        name = "bearerAuth", // 1. Um nome para referenciar este esquema de segurança.
+        type = SecuritySchemeType.HTTP, // 2. O tipo de segurança. HTTP é usado para Bearer, Basic Auth, etc.
+        scheme = "bearer", // 3. O esquema específico. "bearer" para JWT.
+        bearerFormat = "JWT" // 4. Um "hint" para o formato do token.
 )
 public class NotesApplication {
 
