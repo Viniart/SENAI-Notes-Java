@@ -40,6 +40,8 @@ O projeto é centrado no cadastro de anotações que podem possuir diversas tags
   - [x] **Autenticação:** Login de usuários com Spring Security e geração de Token JWT para autorização das requisições.
   - [x] **Gerenciamento de Usuários:** Cadastro de novos usuários com criptografia de senha.
   - [x] **CRUD de Anotações:** Funcionalidades completas para Criar, Ler, Atualizar e Deletar anotações.
+  - [x] **Upload e Exibição de Imagens**: Permite o upload de imagens locais para serem associadas a uma anotação (através do endpoint /api/anotacao/imagem) e a sua posterior exibição (via /api/anotacao/imagem/{nomeImagem}).
+  - [x] **Redefinição de Senha via E-mail**: Funcionalidade para que usuários que esqueceram a senha possam solicitar uma nova. O sistema gera uma senha temporária e a envia para o e-mail cadastrado do usuário utilizando o serviço SMTP do Gmail.
   - [x] **Sistema de Tags Dinâmico:** Um usuário pode criar novas tags durante o cadastro de uma anotação, e o sistema as reutiliza de forma inteligente.
   - [x] **Listagem de Anotação por Usuário:** Endpoints para listar anotações por usuário.
   - [x] **Padrão DTO:** Utilização de Data Transfer Objects para garantir a segurança e a integridade dos dados trafegados.
