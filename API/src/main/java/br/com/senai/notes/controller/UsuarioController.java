@@ -2,6 +2,7 @@ package br.com.senai.notes.controller;
 
 import br.com.senai.notes.dto.usuario.CadastroUsuarioDTO;
 import br.com.senai.notes.dto.usuario.ListarUsuarioDTO;
+import br.com.senai.notes.dto.usuario.ResetarSenhaDTO;
 import br.com.senai.notes.model.Usuario;
 import br.com.senai.notes.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,8 +60,8 @@ public class UsuarioController {
             @ApiResponse(responseCode = "201", description = "Usuário cadastrado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos para o cadastro")
     })
-    public ResponseEntity<CadastroUsuarioDTO> inserirUsuario(@Valid @RequestBody CadastroUsuarioDTO usuario) {
-        CadastroUsuarioDTO novoUsuario = usuarioService.cadastrar(usuario);
+    public ResponseEntity<ListarUsuarioDTO> inserirUsuario(@Valid @RequestBody CadastroUsuarioDTO usuario) {
+        ListarUsuarioDTO novoUsuario = usuarioService.cadastrar(usuario);
 
         if (novoUsuario == null) {
             return ResponseEntity.badRequest().build();
@@ -103,6 +104,12 @@ public class UsuarioController {
         }
 
         return ResponseEntity.ok(usuarioDeletado);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@Valid @RequestBody ResetarSenhaDTO dto) {
+        usuarioService.recuperarSenha(dto.getEmail());
+        return ResponseEntity.ok("Se um usuário com este e-mail existir, uma nova senha será enviada.");
     }
 
 }

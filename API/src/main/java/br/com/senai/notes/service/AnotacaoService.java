@@ -1,5 +1,6 @@
 package br.com.senai.notes.service;
 
+import br.com.senai.notes.dto.anotacao.CadastroAnotacaoComImagemDTO;
 import br.com.senai.notes.dto.anotacao.CadastroAnotacaoDTO;
 import br.com.senai.notes.dto.anotacao.ListarAnotacaoDTO;
 import br.com.senai.notes.dto.tag.ListarTagDTO;
@@ -26,12 +27,14 @@ public class AnotacaoService {
     private final UsuarioRepository usuarioRepository;
     private final TagRepository tagRepository;
     private final TagAnotacaoRepository tagAnotacaoRepository;
+    private final ArmazenamentoService armazenamentoService;
 
-    public AnotacaoService(AnotacaoRepository anotacaoRepository, UsuarioRepository usuarioRepository, TagRepository tagRepository, TagAnotacaoRepository tagAnotacaoRepository) {
+    public AnotacaoService(AnotacaoRepository anotacaoRepository, UsuarioRepository usuarioRepository, TagRepository tagRepository, TagAnotacaoRepository tagAnotacaoRepository, ArmazenamentoService armazenamentoService) {
         this.anotacaoRepository = anotacaoRepository;
         this.usuarioRepository = usuarioRepository;
         this.tagRepository = tagRepository;
         this.tagAnotacaoRepository = tagAnotacaoRepository;
+        this.armazenamentoService = armazenamentoService;
     }
 
     public List<ListarAnotacaoDTO> listarAnotacoes(){
@@ -51,7 +54,8 @@ public class AnotacaoService {
     }
 
     @Transactional
-    public CadastroAnotacaoDTO cadastrarAnotacao(CadastroAnotacaoDTO anotacao) {
+    public CadastroAnotacaoDTO cadastrarAnotacaoSemImagem(CadastroAnotacaoDTO anotacao) {
+
         // 1. Busco o Usuário
         Usuario usuario = usuarioRepository.findById(anotacao.getUsuarioId())
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
@@ -61,7 +65,56 @@ public class AnotacaoService {
         novaAnotacao.setUsuario(usuario);
         novaAnotacao.setTitulo(anotacao.getTitulo());
         novaAnotacao.setDescricao(anotacao.getDescricao());
-        novaAnotacao.setImagemAnotacao(anotacao.getImagemUrl());
+        novaAnotacao.setImagemAnotacao("");
+        novaAnotacao.setDataCriacao(Instant.now());
+        novaAnotacao.setDataEdicao(Instant.now());
+        novaAnotacao.setAnotacaoArquivada(false);
+
+        // Salvo a anotação no banco e guardo o resultado (contém o Id)
+        Anotacao anotacaoSalva = anotacaoRepository.save(novaAnotacao);
+
+        for (String nomeTag : anotacao.getTags()) {
+            Tag tag = tagRepository.findByNomeTagAndUsuarioId(nomeTag, usuario.getId())
+                    .orElseGet(() -> {
+                        Tag novaTag = new Tag();
+                        novaTag.setNomeTag(nomeTag);
+                        novaTag.setUsuario(usuario);
+
+                        return tagRepository.save(novaTag);
+                    });
+
+            // 3. Cadastro na tabela intermediária
+            // Criamos a chave composta para a nossa tabela intermediária.
+            TagAnotacaoId tagAnotacaoId = new TagAnotacaoId();
+            tagAnotacaoId.setIdAnotacao(anotacaoSalva.getId());
+            tagAnotacaoId.setIdTag(tag.getId());
+
+            TagAnotacao associacao = new TagAnotacao();
+            associacao.setId(tagAnotacaoId);
+            associacao.setIdAnotacao(anotacaoSalva);
+            associacao.setIdTag(tag);
+
+            tagAnotacaoRepository.save(associacao);
+        }
+
+        return anotacao;
+    }
+
+    @Transactional
+    public CadastroAnotacaoDTO cadastrarAnotacaoComImagem(CadastroAnotacaoComImagemDTO anotacao) {
+
+        String nomeArquivo = armazenamentoService.salvarArquivo(anotacao.getImagem());
+
+        // 1. Busco o Usuário
+        Usuario usuario = usuarioRepository.findById(anotacao.getUsuarioId())
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
+
+        // 2. Cadastro a Anotação
+        Anotacao novaAnotacao = new Anotacao();
+        novaAnotacao.setUsuario(usuario);
+        novaAnotacao.setTitulo(anotacao.getTitulo());
+        novaAnotacao.setDescricao(anotacao.getDescricao());
+        novaAnotacao.setImagemAnotacao(nomeArquivo);
         novaAnotacao.setDataCriacao(Instant.now());
         novaAnotacao.setDataEdicao(Instant.now());
         novaAnotacao.setAnotacaoArquivada(false);
@@ -96,7 +149,12 @@ public class AnotacaoService {
             tagAnotacaoRepository.save(associacao);
         }
 
-        return anotacao;
+        CadastroAnotacaoDTO cadastroAnotacaoDTO = new CadastroAnotacaoDTO();
+        cadastroAnotacaoDTO.setImagemUrl(anotacao.getImagemUrl());
+        cadastroAnotacaoDTO.setDescricao(anotacao.getDescricao());
+        cadastroAnotacaoDTO.setTitulo(anotacao.getTitulo());
+
+        return cadastroAnotacaoDTO;
     }
 
     private ListarAnotacaoDTO converterParaDTO(Anotacao anotacao) {

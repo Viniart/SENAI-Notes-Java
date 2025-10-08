@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Data
-public class CadastroAnotacaoDTO {
+public class CadastroAnotacaoComImagemDTO {
     @NotBlank(message = "O título não pode estar em branco.")
     @Size(min = 3, max = 150, message = "O título deve ter entre 3 e 150 caracteres.")
     private String titulo;
@@ -25,6 +25,8 @@ public class CadastroAnotacaoDTO {
     @NotNull(message = "O ID do usuário é obrigatório.")
     @Positive(message = "O ID do usuário deve ser um número positivo.")
     private Integer usuarioId;
+
+    private MultipartFile imagem;
 
     private List<String> tags;
 }

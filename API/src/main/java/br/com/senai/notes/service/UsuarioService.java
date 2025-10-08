@@ -4,6 +4,7 @@ import br.com.senai.notes.dto.usuario.CadastroUsuarioDTO;
 import br.com.senai.notes.dto.usuario.ListarUsuarioDTO;
 import br.com.senai.notes.model.Usuario;
 import br.com.senai.notes.repository.UsuarioRepository;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +15,12 @@ import java.util.stream.Collectors;
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder encoder;
+    private final EmailService emailService;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder encoder) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder encoder, EmailService emailService) {
         this.usuarioRepository = usuarioRepository;
         this.encoder = encoder;
+        this.emailService = emailService;
     }
 
     public List<ListarUsuarioDTO> listarTodos() {
@@ -51,7 +54,7 @@ public class UsuarioService {
         return converterParaListagemDTO(usuario);
     }
 
-    public CadastroUsuarioDTO cadastrar(CadastroUsuarioDTO dto) {
+    public ListarUsuarioDTO cadastrar(CadastroUsuarioDTO dto) {
         Usuario usuario = new Usuario();
 
         String senha = encoder.encode(dto.getSenha());
@@ -61,7 +64,9 @@ public class UsuarioService {
 
         usuarioRepository.save(usuario);
 
-        return dto;
+        ListarUsuarioDTO listarUsuarioDTO = converterParaListagemDTO(usuario);
+
+        return listarUsuarioDTO;
     }
 
     public CadastroUsuarioDTO atualizar(Integer id, CadastroUsuarioDTO dto) {
@@ -90,6 +95,18 @@ public class UsuarioService {
 
         usuarioRepository.delete(usuario);
         return usuario;
+    }
+
+    public void recuperarSenha(String email) {
+        usuarioRepository.findByEmail(email).ifPresent(usuario -> {
+            String novaSenha = RandomStringUtils.randomAlphanumeric(12);
+            String senhaCodificada = encoder.encode(novaSenha);
+
+            usuario.setSenha(senhaCodificada);
+            usuarioRepository.save(usuario);
+
+            emailService.enviarEmailSenha(usuario.getEmail(), novaSenha);
+        });
     }
 
     private ListarUsuarioDTO converterParaListagemDTO(Usuario usuario) {
