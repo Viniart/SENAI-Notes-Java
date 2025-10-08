@@ -1,3 +1,4 @@
+CREATE SCHEMA senainotes;
 
 CREATE TABLE senainotes.usuario(
 	id_usuario INT PRIMARY KEY generated always as IDENTITY,
